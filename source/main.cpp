@@ -8,6 +8,7 @@
 #include "al/util/StringUtil.h"
 #include "cameras/CameraPoserCustom.h"
 #include "debugMenu.hpp"
+#include "areas/GravityDirector.h"
 
 static bool showMenu = true;
 
@@ -154,12 +155,15 @@ void stageInitHook(StageScene *initStageScene, al::SceneInitInfo *sceneInitInfo)
 
     // place any code that needs to be ran during init here (creating actors for example)
 
+
     __asm("MOV X1, X24");
 }
 
 ulong threadInit()
 { // hook for initializing any threads we need
     __asm("STR X21, [X19,#0x208]");
+
+    galaxy::GravityDirector::createInstance(nullptr);
 
     return 0x20;
 }
@@ -175,6 +179,8 @@ void stageSceneHook()
 
     al::PlayerHolder *pHolder = al::getScenePlayerHolder(stageScene);
     PlayerActorHakoniwa *p1 = (PlayerActorHakoniwa*)al::tryGetPlayerActor(pHolder, 0);
+    
+    galaxy::GravityDirector* gravityDirector = galaxy::GravityDirector::instance();
 
     isInGame = true;
 
@@ -182,6 +188,10 @@ void stageSceneHook()
     {
         showMenu = !showMenu;
     }
+    sead::Vector3f gravity;
+    gravityDirector->getAllGravityAreas(p1);
+    gravityDirector->calcTotalGravity(gravity, p1);
+    al::setGravity(p1, gravity);
 
     __asm("MOV X0, %[input]"
           : [input] "=r"(stageScene));

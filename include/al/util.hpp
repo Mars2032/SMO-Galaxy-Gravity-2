@@ -451,6 +451,7 @@ namespace al
     bool isInAreaObj(al::LiveActor const *, const char *);
 
     al::AreaObj *tryFindAreaObj(al::LiveActor const *, const char *);
+    AreaObjGroup *tryFindAreaObjGroup(IUseAreaObj const *, const char *areaName);
 
     void tryGetAreaObjArg(int *, al::AreaObj const *, const char *);
     void tryGetAreaObjArg(float *, al::AreaObj const *, const char *);
